@@ -1,0 +1,22 @@
+apiVersion: v1
+entries:
+  redisinsight:
+  - apiVersion: v2
+    appVersion: 0.1.0
+    created: "2022-10-20T18:11:41.867364512Z"
+    description: A Helm chart for Redis Insight.
+    digest: 4de365611c1f743f1c380d98600bd536f28f40f5232870d983d90f771b3db7ed
+    home: https://developer.redis.com/
+    icon: https://upload.wikimedia.org/wikipedia/en/thumb/6/6b/Redis_Logo.svg/2880px-Redis_Logo.svg.png
+    keywords:
+    - redis
+    - database
+    - redisinsight
+    name: redisinsight
+    sources:
+    - https://developer.redis.com/
+    type: application
+    urls:
+    - https://spy86.github.io/redisinsight/redisinsight-0.1.0.tgz
+    version: 0.1.0
+generated: "2022-10-20T18:11:41.866559376Z"
