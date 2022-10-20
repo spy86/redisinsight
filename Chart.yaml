@@ -1,0 +1,16 @@
+apiVersion: v2
+name: redisinsight
+description: A Helm chart for Redis Insight.
+type: application
+version: 0.1.0
+appVersion: "0.1.0"
+deprecated: false
+keywords:
+- redis
+- database
+- redisinsight
+sources:
+- https://developer.redis.com/
+icon: https://upload.wikimedia.org/wikipedia/en/thumb/6/6b/Redis_Logo.svg/2880px-Redis_Logo.svg.png
+home: https://developer.redis.com/
+maintainers: []

@@ -1,0 +1,57 @@
+# -- Configure the replicas for the pods
+replicaCount: 1
+# -- Configure default namespace
+namespace: 
+  name: default
+# -- Image to use for deploying
+image:
+  repository: redislabs/redisinsight
+  pullPolicy: IfNotPresent
+  # -- Overrides the image tag whose default is the chart appVersion.
+  tag: latest
+# -- Secret for container registry
+imagePullSecrets: []
+# -- Overrides the name
+nameOverride: ""
+# -- Overrides the fullname
+fullnameOverride: ""
+# -- Configuration for service account
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: true
+  # Annotations to add to the service account
+  annotations: {}
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: ""
+# -- Additional annotations will be added to the pods of this component as well as to your Deployments or StatefulSets used to create the pods.
+podAnnotations: {}
+# -- Pod SecurityContext settings
+podSecurityContext: {}
+# -- SecurityContext settings
+securityContext: {}
+# -- Service Type which are use to expose service
+service:
+  type: ClusterIP
+  port: 80
+# -- Configuration for resources limits (CPU/MEM requests and limits)
+resources:
+   limits:
+     cpu: 500m
+     memory: 2048M
+   requests:
+     cpu: 20m
+     memory: 512Mi
+# -- Configuration for Autoscaling
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 100
+  targetCPUUtilizationPercentage: 80
+  targetMemoryUtilizationPercentage: 80
+# -- Configuration for nodeSelector
+nodeSelector: {}
+# -- Configuration for tolerations
+tolerations: []
+# -- Configuration for affinity
+affinity: {}
