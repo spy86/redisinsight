@@ -2,7 +2,7 @@
 replicaCount: 1
 # -- Configure default namespace
 namespace: 
-  name: default
+  name: test
 # -- Image to use for deploying
 image:
   repository: redislabs/redisinsight
@@ -27,9 +27,15 @@ serviceAccount:
 # -- Additional annotations will be added to the pods of this component as well as to your Deployments or StatefulSets used to create the pods.
 podAnnotations: {}
 # -- Pod SecurityContext settings
-podSecurityContext: {}
+podSecurityContext:
+  runAsNonRoot: true
+  runAsUser: 101
+  runAsGroup: 101 
 # -- SecurityContext settings
-securityContext: {}
+securityContext:
+  runAsNonRoot: true
+  runAsUser: 101 
+  runAsGroup: 101 
 # -- Service Type which are use to expose service
 service:
   type: ClusterIP

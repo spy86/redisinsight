@@ -30,12 +30,34 @@ spec:
       volumes:
         - name: db
           emptyDir: {}
+        - name: nginx-cm
+          configMap:
+            name: {{ include "redisinsight.fullname" . }}-nginx-cm
       containers:
+        {{- if .Values.proxy.enabled }}
+        - name: proxy
+          image: nginx
+          volumeMounts:
+            - name: nginx-cm
+              mountPath: /etc/nginx/
+          command: ["/docker-entrypoint.sh"]
+          args: ["nginx"]
+          env:
+            - name: FORWARD_HOST
+              value: "localhost"
+            - name: FORWARD_PORT
+              value: "8001"
+            - name: NGINX_PORT
+              value: "{{.Values.proxy.nginxPort }}"
+        {{- end}}
         - name: {{ .Chart.Name }}
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
+          env:
+          - name: RIPORT
+            value: "8001"
           ports:
             - name: http
               containerPort: 8001
