@@ -97,6 +97,17 @@ proxy:
     tlsSecret: redis-insight-tls
 ```
 
+You may need to configure annotations to enable SSL passthrough on your ingress.  You will need to refer to your ingress provider for this documentation.  Below is an example for Nginx.
+
+```
+  annotations: {
+    nginx.ingress.kubernetes.io/backend-protocol: 'HTTPS',
+    nginx.ingress.kubernetes.io/ssl-redirect: 'true',
+    nginx.ingress.kubernetes.io/ssl-passthrough: 'true',
+    kubernetes.io/ingress.allowHTTP: 'false'
+  }
+```
+
 ## Configure authentication
 If you want to enable authentication to the console you can use a basic auth file.  You must have the proxy enabled for this to work.  To do this you need to generate a hash.  The easiest way to do this is run the command:
 
