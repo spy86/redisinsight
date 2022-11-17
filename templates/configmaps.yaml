@@ -42,16 +42,25 @@ data:
     
         include /etc/nginx/conf.d/*.conf;
          server {
+           {{- if .Values.proxy.tls.tlsEnabled }}
+           listen 	{{.Values.proxy.nginxPort }} ssl;
+           server_name         {{ .Values.externalName }};
+           ssl_certificate     /etc/ssl/proxy/tls.crt;
+           ssl_certificate_key /etc/ssl/proxy/tls.key;
+           ssl_protocols       TLSv1.2;
+           ssl_ciphers         HIGH:!aNULL:!MD5;
+ 
+           {{- else }}
            listen {{.Values.proxy.nginxPort }} default_server;
+           {{- end}}
 
            location / {
              auth_basic             "redisinsight";
              auth_basic_user_file   auth;
-
              proxy_pass             http://localhost:8001;
              proxy_read_timeout     900;
            }
       }
     }
   auth: |
-    redisinsight:$6$QO0GMUSorf07onBm$Pi519nLDyFL83FRmTBT9GR.Xr9ErukxIZ0aoI4h0k7G17/PM8u45mggjBjioyASl7ttY0OovVfh8JZ/AfwXjp.
+    {{ .Values.proxy.auth.user }}:{{ .Values.proxy.auth.password }}
