@@ -70,6 +70,13 @@ spec:
           env:
           - name: RIPORT
             value: "8001"
+          {{- if .Values.proxy.tls.tlsEnabled }}
+          - name: RITRUSTEDORIGINS
+            value: "https://redisinsight.external.domain"
+          {{- else }}
+          - name: RITRUSTEDORIGINS
+            value: "http://redisinsight.external.domain"
+          {{- end }}
           ports:
             - name: http
               containerPort: 8001

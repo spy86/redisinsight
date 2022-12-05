@@ -55,8 +55,10 @@ data:
            {{- end}}
 
            location / {
+             {{- if .Values.proxy.auth.enabled }}
              auth_basic             "redisinsight";
              auth_basic_user_file   auth;
+             {{- end}}
              proxy_pass             http://localhost:8001;
              proxy_read_timeout     900;
            }

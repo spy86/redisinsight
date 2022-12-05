@@ -64,12 +64,13 @@ ingress:
   enabled: true
   annotations: {}
   # For SSL you might need to enable SSL pass through  on NGINX the process is:
-#  annotations: {
-#    nginx.ingress.kubernetes.io/backend-protocol: 'HTTPS',
-#    nginx.ingress.kubernetes.io/ssl-redirect: 'true',
-#    nginx.ingress.kubernetes.io/ssl-passthrough: 'true',
-#    kubernetes.io/ingress.allowHTTP: 'false'
-#  }
+  annotations_ssl: {
+    nginx.ingress.kubernetes.io/backend-protocol: 'HTTPS',
+    nginx.ingress.kubernetes.io/ssl-redirect: 'true',
+    nginx.ingress.kubernetes.io/ssl-passthrough: 'true',
+    kubernetes.io/ingress.allow-http: 'false',
+    nginx.ingress.kubernetes.io/force-ssl-redirect: 'true'
+  }
 
 # -- Configure to deploy with Proxy -- This will enable TLS and authentication
 proxy:
