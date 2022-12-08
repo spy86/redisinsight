@@ -30,12 +30,53 @@ spec:
       volumes:
         - name: db
           emptyDir: {}
+        {{- if .Values.proxy.enabled }}
+        - name: nginx-cm
+          configMap:
+            name: {{ include "redisinsight.fullname" . }}-nginx-cm
+        {{- if .Values.proxy.tls.tlsEnabled }}
+        - name: ssl-certs 
+          secret:
+            secretName: {{ .Values.proxy.tls.tlsSecret }}
+        {{- end}}
+        {{- end}}
       containers:
+        {{- if .Values.proxy.enabled }}
+        - name: proxy
+          image: nginx
+          volumeMounts:
+            - name: nginx-cm
+              mountPath: /etc/nginx/
+            {{- if .Values.proxy.tls.tlsEnabled }}
+            - name: ssl-certs
+              mountPath: "/etc/ssl/proxy/"
+              readOnly: true
+            {{- end }}
+          command: ["/docker-entrypoint.sh"]
+          args: ["nginx"]
+          env:
+            - name: FORWARD_HOST
+              value: "localhost"
+            - name: FORWARD_PORT
+              value: "8001"
+            - name: NGINX_PORT
+              value: "{{.Values.proxy.nginxPort }}"
+        {{- end}}
         - name: {{ .Chart.Name }}
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
+          env:
+          - name: RIPORT
+            value: "8001"
+          {{- if .Values.proxy.tls.tlsEnabled }}
+          - name: RITRUSTEDORIGINS
+            value: "https://redisinsight.external.domain"
+          {{- else }}
+          - name: RITRUSTEDORIGINS
+            value: "http://redisinsight.external.domain"
+          {{- end }}
           ports:
             - name: http
               containerPort: 8001

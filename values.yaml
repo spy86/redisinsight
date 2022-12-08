@@ -34,6 +34,7 @@ securityContext: {}
 service:
   type: ClusterIP
   port: 80
+
 # -- Configuration for resources limits (CPU/MEM requests and limits)
 resources:
    limits:
@@ -55,3 +56,34 @@ nodeSelector: {}
 tolerations: []
 # -- Configuration for affinity
 affinity: {}
+
+# will be used if you deploy ingress or deploy the proxy
+externalName: redisinsight.external.domain
+
+ingress:
+  enabled: true
+  annotations: {}
+  # For SSL you might need to enable SSL pass through  on NGINX the process is:
+  annotations_ssl: {
+    nginx.ingress.kubernetes.io/backend-protocol: 'HTTPS',
+    nginx.ingress.kubernetes.io/ssl-redirect: 'true',
+    nginx.ingress.kubernetes.io/ssl-passthrough: 'true',
+    kubernetes.io/ingress.allow-http: 'false',
+    nginx.ingress.kubernetes.io/force-ssl-redirect: 'true'
+  }
+
+# -- Configure to deploy with Proxy -- This will enable TLS and authentication
+proxy:
+  enabled: false
+  ## Needs to be different then the port redisinsight is listening on (port 8001)
+  nginxPort: 9000
+  tls:
+    tlsEnabled: false
+    tlsSecret: redis-insight-tls
+  auth:
+    enabled: false
+    user: redisinsight
+    ###  To create this has you can use either command:
+    ###     openssl passwd -6
+    ###     htpasswd -5 -n username  (only take the password portion after the first :
+    password: $6$odj8aDdQK14QXYtc$U3NPBgc/4ffABDpC4BrbEonUW1VtMEFvYUsynv/4QcaUhYbS2uqUywCoRsoxY.zKacYmeHBI5.cr.RfyK2tge1

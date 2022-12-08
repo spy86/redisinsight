@@ -1,0 +1,68 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "redisinsight.fullname" . }}-nginx-cm
+data:
+  nginx.conf: |
+    worker_processes  auto;
+    daemon off;
+    
+
+    error_log  /var/log/nginx/error.log notice;
+    pid        /tmp/nginx.pid;
+    
+    
+    events {
+        worker_connections  1024;
+    }
+    
+    
+    http {
+        client_body_temp_path /tmp/client_temp;
+        proxy_temp_path       /tmp/proxy_temp_path;
+        fastcgi_temp_path     /tmp/fastcgi_temp;
+        uwsgi_temp_path       /tmp/uwsgi_temp;
+        scgi_temp_path        /tmp/scgi_temp;
+
+        #include       /etc/nginx/mime.types;
+        default_type  application/octet-stream;
+    
+        log_format  main  '$remote_addr - $remote_user [$time_local] "$request" '
+                          '$status $body_bytes_sent "$http_referer" '
+                          '"$http_user_agent" "$http_x_forwarded_for"';
+    
+        access_log  /var/log/nginx/access.log  main;
+    
+        sendfile        on;
+        #tcp_nopush     on;
+
+        keepalive_timeout  65;
+    
+        #gzip  on;
+    
+        include /etc/nginx/conf.d/*.conf;
+         server {
+           {{- if .Values.proxy.tls.tlsEnabled }}
+           listen 	{{.Values.proxy.nginxPort }} ssl;
+           server_name         {{ .Values.externalName }};
+           ssl_certificate     /etc/ssl/proxy/tls.crt;
+           ssl_certificate_key /etc/ssl/proxy/tls.key;
+           ssl_protocols       TLSv1.2;
+           ssl_ciphers         HIGH:!aNULL:!MD5;
+ 
+           {{- else }}
+           listen {{.Values.proxy.nginxPort }} default_server;
+           {{- end}}
+
+           location / {
+             {{- if .Values.proxy.auth.enabled }}
+             auth_basic             "redisinsight";
+             auth_basic_user_file   auth;
+             {{- end}}
+             proxy_pass             http://localhost:8001;
+             proxy_read_timeout     900;
+           }
+      }
+    }
+  auth: |
+    {{ .Values.proxy.auth.user }}:{{ .Values.proxy.auth.password }}
