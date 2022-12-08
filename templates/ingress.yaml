@@ -3,9 +3,16 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: {{ include "redisinsight.fullname" . }}
+  {{- if .Values.proxy.tls.tlsEnabled }}
+  {{- with .Values.ingress.annotations_ssl }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  {{- else }}
   {{- with .Values.ingress.annotations }}
   annotations:
     {{- toYaml . | nindent 4 }}
+  {{- end }}
   {{- end }}
 spec:
   rules:
